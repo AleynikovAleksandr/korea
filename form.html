@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin-left: 20px;
+        }
+
+        h1 {
+            text-align: left;
+        }
+
+        form {
+            width: 100%;
+            max-width: 500px;
+            margin: 0;
+        }
+
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .form-table td {
+            padding: 5px;
+            vertical-align: top;
+            border: none;
+            vertical-align: middle;
+        }
+        
+        .form-table td label {
+            vertical-align: middle; /* Выравнивание текста по центру строки */
+        }
+
+
+
+        .form-table td:first-child {
+            text-align: right; /* Выравнивание текста по правому краю для меток */
+            padding-right: 10px; /* Отступ между меткой и полем ввода */
+        }
+
+        #table {
+            width: 100%;
+            border: 1px solid #000;
+            margin-top: 20px;
+            table-layout: auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+            overflow: hidden; /* Скрывает содержимое, превышающее размер ячейки */
+           
+        }
+
+        .header-row {
+            border: 10px solid black; /* Чёрная рамка вокруг всей строки заголовка */
+        }
+        
+        th {
+            color: black; /* Белый текст для заголовков */
+            border: 2px solid black; /* Устанавливаем границу для заголовков, чтобы они обводились */
+        }
+        th {
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            height: 40px; /* Фиксированная высота для полей ввода */
+        }
+
+        textarea {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            min-height: 60px;
+            resize: vertical; /* Позволяет изменять только высоту текстового поля */
+            font-family: Arial, sans-serif; 
+        }
+
+        input[type="submit"] {
+            padding: 5px;
+            transform: translateY(-10px); /* поднимает кнопку вверх на 10 пикселей */
+            background-color: gainsboro;
+            border: 1px solid black;
+            cursor: pointer;
+            text-align: center;
+            height: 30px;
+            font-size: 15px;
+            border-radius: 4px;
+            margin-right: 112px; /* отступ слева */
+            
+        }
+
+        input[type="radio"] {
+            width: auto; /* Убирает любое изменение размера */
+            height: auto;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .radio-group input {
+            margin-right: 5px;
+            width: auto; /* Устанавливает стандартный размер радио-кнопок */
+            height: auto;
+        }
+
+        .radio-group label {
+            font-weight: normal; /* Обычное начертание текста */
+        }
+
+        select {
+            width: auto; /* Автоматическая ширина, чтобы соответствовать содержимому */
+            min-width: 100px; /* Минимальная ширина для удобства */
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Coffee Blog</h1>
+    <form>
+        <table class="form-table">
+            <tr>
+                <td><label for="drink-name">Название напитка</label></td>
+                <td><input type="text" id="drink-name" name="title" placeholder="Введите название напитка"></td>
+            </tr>
+            <tr>
+                <td><label for="coffee-sort">Сорт кофе</label></td>
+                <td>
+                    <select id="coffee-sort" name="sort">
+                        <option value="гватемала">Гватемала</option>
+                        <option value="колумбия">Колумбия</option>
+                        <option value="эфиопия">Эфиопия</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label>Крепость обжарки</label></td>
+                <td>
+                    <div class="radio-group">
+                        <label for="strong">
+                            <input type="radio" id="strong" name="strong" value="крепкая">
+                            Крепкая
+                        </label>
+                        <label for="medium">
+                            <input type="radio" id="medium" name="strong" value="средняя" >
+                            Средняя
+                        </label>
+                        <label for="light">
+                            <input type="radio" id="light" name="strong" value="легкая">
+                            Легкая
+                        </label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="image-url">Изображение</label></td>
+                <td><input type="text" id="image-url" name="image" placeholder="Введите URL изображения"></td>
+            </tr>
+            <tr>
+                <td><label for="price">Стоимость напитка</label></td>
+                <td><input type="number" id="price" name="cost" placeholder="Введите стоимость"></td>
+            </tr>
+            <tr>
+                <td><label for="description">Описание</label></td>
+                <td><textarea id="description" name="description" rows="4" placeholder="Введите описание напитка"></textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: right; padding-top: 10px;"> <!-- Выравнивание по правому краю -->
+                    <input type="submit" value="Добавить напиток"  style="width: auto; "> 
+            </tr>
+        </table>
+    </form>
+
+    <br>
+
+    <table id="table">
+        <tr>
+            <th>Изображение</th>
+            <th>Название</th>
+            <th>Сорт</th>
+            <th>Крепость обжарки</th>
+            <th>Стоимость</th>
+            <th>Описание</th>
+        </tr>
+    </table>
+
+    <script>
+        const f = document.forms[0];
+        let tr = document.getElementById("table");
+
+        f.addEventListener("submit", (e) => {
+            e.preventDefault();
+            let body = {};
+
+            for (let i = 0; i < f.elements.length; i++) {
+                let tag = f[i];
+                if (tag.name) {
+                    if (tag.type === "radio" && tag.checked) {
+                        body[tag.name] = tag.value;
+                    } else if (tag.type !== "radio") {
+                        body[tag.name] = tag.value;
+                    }
+                }
+            }
+
+            let html = "<tr>";
+            html += `<td><img src="${body.image}" width="50" alt="${body.title}"></td>`;
+            html += `<td>${body.title || ""}</td>`;
+            html += `<td>${body.sort || ""}</td>`;
+            html += `<td>${body.strong || ""}</td>`;
+            html += `<td>${body.cost || ""}</td>`;
+            html += `<td>${body.description || ""}</td>`;
+            html += "</tr>";
+            tr.innerHTML += html;
+        });
+    </script>
+</body>
+</html>
