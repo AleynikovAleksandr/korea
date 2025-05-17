@@ -1,58 +1,173 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from PyQt5.uic import loadUi
-from utils.logger import log_action
+from PyQt5 import QtCore, QtGui
+from decimal import Decimal
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit
+from PyQt5.QtGui import QPalette, QColor 
 
-class Calculator(QMainWindow):
+class Calculator(QWidget):
     def __init__(self):
         super().__init__()
-        loadUi('calculator.ui', self)
-        self.setup_buttons()
-        log_action("Application started")
-
-    def setup_buttons(self):
-        # Цифры
-        self.btn_0.clicked.connect(lambda: self.add_to_display('0'))
-        self.btn_1.clicked.connect(lambda: self.add_to_display('1'))
-        self.btn_2.clicked.connect(lambda: self.add_to_display('2'))
-        self.btn_3.clicked.connect(lambda: self.add_to_display('3'))
-        self.btn_4.clicked.connect(lambda: self.add_to_display('4'))
-        self.btn_5.clicked.connect(lambda: self.add_to_display('5'))
-        self.btn_6.clicked.connect(lambda: self.add_to_display('6'))
-        self.btn_7.clicked.connect(lambda: self.add_to_display('7'))
-        self.btn_8.clicked.connect(lambda: self.add_to_display('8'))
-        self.btn_9.clicked.connect(lambda: self.add_to_display('9'))
+        self.setWindowTitle('Calculator')
+        self.setLayout(QVBoxLayout())
+        self.last_pressed = []
         
-        # Операции
-        self.btn_add.clicked.connect(lambda: self.add_to_display('+'))
-        self.btn_subtract.clicked.connect(lambda: self.add_to_display('-'))
-        self.btn_multiply.clicked.connect(lambda: self.add_to_display('*'))
-        self.btn_divide.clicked.connect(lambda: self.add_to_display('/'))
-        self.btn_equals.clicked.connect(self.calculate)
-        self.btn_clear.clicked.connect(self.clear_display)
-        self.btn_dot.clicked.connect(lambda: self.add_to_display('.'))
+        # Create the input field
+        self.input_field = QLineEdit()
+        self.input_field.setReadOnly(True)
+        self.input_field.setAlignment(QtCore.Qt.AlignRight)
+        self.input_field.setText('0')
+        self.layout().addWidget(self.input_field)
+        
+        # Create the buttons with new arrangement
+        buttons = [
+            ['C', '+/-', '%', '÷'],  # Top row with control buttons
+            ['7', '8', '9', '×'],
+            ['4', '5', '6', '−'],
+            ['1', '2', '3', '+'],
+            ['0', '00', '.', '=']    # = button is now under plus
+        ]
+        
+        grid_layout = QGridLayout()
+        
+        for row, button_row in enumerate(buttons):
+            for col, button_label in enumerate(button_row):
+                button = QPushButton(button_label)
+                button.clicked.connect(self.button_clicked)
+                button.setObjectName("calculatorButton")
+                if button_label in ['÷', '×', '−', '+', '+/-', '=', '%', 'C']:
+                    button.setObjectName("mathButton")
+                grid_layout.addWidget(button, row, col)
+        
+        self.layout().addLayout(grid_layout)
+        self.current_value = ''
+        
+        # Set the colors and styles
+        self.setStyleSheet('''
+    QPushButton#calculatorButton {
+        background-color: #333333; /* Тёмно-серый цвет для кнопок */
+        color: white;
+        font-size: 16px; /* Уменьшенный шрифт */
+        padding: 8px; /* Уменьшенные внутренние отступы */
+        min-width: 40px; /* Уменьшение ширины кнопок */
+        min-height: 40px; /* Уменьшение высоты кнопок */
+        border-radius: 20px; /* Закругление кнопок */
+    }
+    QPushButton#mathButton {
+        background-color: #FFA500; /* Жёлтый цвет для кнопок */
+        color: white;
+        font-size: 16px;
+        padding: 8px;
+        min-width: 40px;
+        min-height: 40px;
+        border-radius: 20px;
+    }
+    QPushButton#controlButton {
+        background-color: #DDDDDD; /* Светло-серый цвет для кнопок */
+        color: black;
+        font-size: 16px;
+        padding: 8px;
+        min-width: 40px;
+        min-height: 40px;
+        border-radius: 20px;
+    }
+    QWidget {
+        background-color: #000000; /* Чёрный фон для всего окна */
+    }
+    QLineEdit {
+        background-color: #000000; /* Чёрный цвет поля ввода */
+        color: white; /* Белый текст */
+        font-size: 18px; /* Уменьшенный шрифт для ввода */
+        padding: 8px; /* Уменьшенные отступы внутри поля ввода */
+        border-radius: 5px; /* Лёгкое закругление углов */
+        margin-top: 10px; /* Отступ сверху */
+        margin-bottom: 10px; /* Отступ снизу */
+    }
+    QPushButton#calculatorButton:hover, QPushButton#mathButton:hover, QPushButton#controlButton:hover {
+        background-color: #777777; /* Серый цвет при наведении */
+    }
+    QPushButton#calculatorButton:pressed, QPushButton#mathButton:pressed, QPushButton#controlButton:pressed {
+        background-color: #555555; /* Тёмно-серый цвет при нажатии */
+    }
+''')
 
-    def add_to_display(self, text):
-        current = self.display.text()
-        self.display.setText(current + text)
-        log_action(f"Button pressed: {text}")
+    def symbdup(self, text):
+        if text in ['+', '-', '*', '/']:
+            if len(self.current_value) > 0 and self.current_value[-1] in ['+', '-', '*', '/']:
+                # Replace the last entered symbol with the new symbol
+                self.current_value = self.current_value[:-1] + text
+            else:
+                self.current_value += text
+        else:
+            self.current_value += text
 
-    def clear_display(self):
-        self.display.setText("")
-        log_action("Display cleared")
+        self.input_field.setText(self.current_value)
 
-    def calculate(self):
-        try:
-            expression = self.display.text()
-            result = eval(expression)
-            self.display.setText(str(result))
-            log_action(f"Calculation: {expression} = {result}")
-        except Exception as e:
-            self.display.setText("Error")
-            log_action(f"Calculation error: {str(e)}")
+    def button_clicked(self):
+        button = self.sender()
+        text = button.text()
+
+        if text == '=':
+            try:
+                result = eval(self.current_value)
+                # Limit displayed numbers to 13 digits
+                result = round(result, 6)
+                result = "{:.13g}".format(Decimal(str(result)))
+                self.input_field.setText(result)
+                self.current_value = str(result)
+                self.last_pressed = '='
+            except (SyntaxError, ZeroDivisionError):
+                self.input_field.setText('Error')
+                self.current_value = ''
+        elif text == 'C':
+            self.input_field.clear()
+            self.current_value = ''
+            self.input_field.setText('0')
+            self.last_pressed = []
+        elif self.current_value == '0':
+            if text != '0' and text != '.':
+                self.current_value = text
+                self.input_field.setText(text)
+        elif self.current_value == '00':
+            if text != '0':
+                self.current_value = text
+                self.input_field.setText(text)
+        elif self.current_value == '0' or self.current_value == '00':
+            self.current_value = text
+            self.input_field.setText(text)
+        elif self.last_pressed == '=' and text.isnumeric():
+            self.input_field.setText(text)
+            self.current_value = text
+            self.last_pressed = text
+        elif text == '÷':
+            text = '/'
+            self.symbdup(text)
+        elif text == '−':
+            text = '-'
+            self.symbdup(text)
+        elif text == '×':
+            text = '*'
+            self.symbdup(text)
+        elif text == '+/-':
+            if self.current_value:
+                if self.current_value.startswith('-'):
+                    self.current_value = self.current_value[1:]
+                else:
+                    self.current_value = '-' + self.current_value
+                self.input_field.setText(self.current_value)
+        elif text == '%':
+            text = '/100'
+            self.symbdup(text)
+        else:
+            self.symbdup(text)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Calculator()
-    window.show()
+    calculator = Calculator()
+    
+    # Set the window background color
+    palette = calculator.palette()
+    palette.setColor(QPalette.Window, QColor("#D3D3D3"))
+    calculator.setPalette(palette)
+    
+    calculator.show()
     sys.exit(app.exec_())

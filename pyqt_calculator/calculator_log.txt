@@ -3,3 +3,14 @@
 [2025-05-17 21:22:33] Application started
 [2025-05-17 21:24:31] Application started
 [2025-05-17 21:27:44] Application started
+[2025-05-17 21:53:43] Application started
+[2025-05-17 21:55:05] Application started
+[2025-05-17 21:55:07] Button pressed: 8
+[2025-05-17 21:55:09] Button pressed: +
+[2025-05-17 21:55:10] Button pressed: 2
+[2025-05-17 21:55:12] Calculation error: eval() arg 1 must be a string, bytes or code object
+[2025-05-17 21:55:22] Display cleared
+[2025-05-17 21:55:23] Button pressed: 4
+[2025-05-17 21:55:24] Button pressed: +
+[2025-05-17 21:55:26] Button pressed: 5
+[2025-05-17 21:55:26] Calculation error: eval() arg 1 must be a string, bytes or code object
